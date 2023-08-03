@@ -4,10 +4,92 @@
 
 <mapper namespace="com.codingtest.rgt.order.dao.OrderMapper">
 
+    <select id="selectOrderList" resultType="com.codingtest.rgt.order.model.Order">
+        SELECT
+            order_id AS orderId,
+            product_name AS productName,
+            options,
+            table_no AS tableNo,
+            quantity,
+            order_date AS orderDate,
+            order_time AS orderTime,
+            date_time AS dateTime,
+            robot_status AS robotStatus,
+            dong,
+            ho,
+            seq,
+            orderer_name AS ordererName
+        FROM `order`;
+
+    </select>
+
+    <select id="findLastDateTimeOrders" resultType="com.codingtest.rgt.order.model.Order">
+        SELECT o.order_id AS orderId,
+               o.product_name AS productName,
+               o.options,
+               o.table_no AS tableNo,
+               o.quantity,
+               o.order_date AS orderDate,
+               o.order_time AS orderTime,
+               o.date_time AS dateTime,
+               o.robot_status AS robotStatus,
+               o.dong,
+               o.ho,
+               o.seq,
+               o.orderer_name AS ordererName
+        FROM `order` o
+                 INNER JOIN (
+            SELECT order_id, MAX(date_time) AS last_date_time
+            FROM `order`
+            GROUP BY order_id
+        ) m ON o.order_id = m.order_id AND o.date_time = m.last_date_time;
+    </select>
+
+
     <insert id="insertOrder">
-        insert into `order` (order_id, product_name, options, table_no, quantity, order_date, order_time, date_time,
-                             robot_status, dong, ho, seq, orderer_name)
-        values (#{orderId}, #{productName}, #{options}, #{tableNo}, #{quantity}, #{orderDate}, #{orderTime},
-                #{dateTime}, #{robotStatus}, #{dong}, #{ho}, #{seq}, #{ordererName});
+        INSERT INTO `order`
+        (order_id, product_name, options, table_no, quantity, order_date, order_time, date_time, robot_status, dong, ho, seq, orderer_name)
+    VALUES
+        (#{orderId}, #{productName}, #{options}, #{tableNo}, #{quantity}, #{orderDate}, #{orderTime}, #{dateTime}, #{robotStatus}, #{dong}, #{ho}, #{seq}, #{ordererName})
     </insert>
+
+    <insert id="insertNewOrder">
+        INSERT INTO `new_order`
+        (order_id, product_name, options, table_no, quantity, order_date, order_time, date_time, robot_status, dong, ho, seq, orderer_name)
+        VALUES
+            (
+                #{orderId},
+                CASE
+                    WHEN #{productName} = #{targetProductName} THEN #{newProductName}
+                    ELSE #{productName}
+                    END,
+                #{options},
+                #{tableNo},
+                #{quantity},
+                #{orderDate},
+                #{orderTime},
+                #{dateTime},
+                #{robotStatus},
+                #{dong},
+                #{ho},
+                #{seq},
+                #{ordererName}
+            )
+        ON DUPLICATE KEY UPDATE
+             product_name = VALUES(product_name),
+             options = VALUES(options),
+             table_no = VALUES(table_no),
+             quantity = VALUES(quantity),
+             order_date = VALUES(order_date),
+             order_time = VALUES(order_time),
+             date_time = VALUES(date_time),
+             robot_status = VALUES(robot_status),
+             dong = VALUES(dong),
+             ho = VALUES(ho),
+             seq = VALUES(seq),
+             orderer_name = VALUES(orderer_name);
+    </insert>
+
+
+
 </mapper>

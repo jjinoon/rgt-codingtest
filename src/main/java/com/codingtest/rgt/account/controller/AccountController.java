@@ -1,35 +1,32 @@
-package com.codingtest.rgt.order.controller;
+package com.codingtest.rgt.account.controller;
 
+import com.codingtest.rgt.account.controller.dto.response.LoginResponse;
+import com.codingtest.rgt.account.service.AccountService;
 import com.codingtest.rgt.common.response.CommonResponse;
-import com.codingtest.rgt.order.controller.dto.request.OrderCommand;
-import com.codingtest.rgt.order.controller.dto.response.GetOrderResponse;
-import com.codingtest.rgt.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Locale;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/codingTest")
-public class OrderController {
+@RequestMapping("/account")
+public class AccountController {
 
-    private final MessageSource messageSource;
+    private final AccountService accountService;
 
-    private final OrderService orderService;
 
-    @GetMapping("/order")
-    public CommonResponse<?> getOrder() {
-        var rows = orderService.getOrderList();
-        return CommonResponse.success(rows.stream().map(GetOrderResponse::new).toList());
+    @GetMapping("/oauth2/callback/google")
+    public CommonResponse<?> successGoogleLogin(@RequestParam("code") String code) {
+        var row = accountService.getGoogleAccount(code);
+
+        // 필요하다면 DB에 유저정보 저장하는 로직 추가
+
+        return CommonResponse.success(new LoginResponse(row));
     }
 
-    @PostMapping("/order")
-    public CommonResponse<?> saveOrder(@RequestBody OrderCommand command) {
-        orderService.saveOrder(command);
-        return CommonResponse.success(messageSource.getMessage("order.save.success", new String[]{command.getOrderId()}, Locale.getDefault()));
-    }
+
 }

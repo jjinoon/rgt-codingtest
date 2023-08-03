@@ -1,4 +1,4 @@
-package com.holdem.airline.airline.config;
+package com.codingtest.rgt.config;
 
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -12,7 +12,7 @@ import org.springframework.core.io.Resource;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan("com.holdem.airline.airline.mapper")
+@MapperScan("com.codingtest.rgt.*.mapper")
 public class MyBatisConfig {
 
     @Bean
@@ -46,7 +46,7 @@ public class MyBatisConfig {
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer() {
         MapperScannerConfigurer scannerConfigurer = new MapperScannerConfigurer();
-        scannerConfigurer.setBasePackage("com.holdem.airline.airline.mapper");
+        scannerConfigurer.setBasePackage("com.codingtest.rgt.*.dao");
         return scannerConfigurer;
     }
 }

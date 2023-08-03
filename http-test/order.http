@@ -1,11 +1,14 @@
-###  테스트
+### 주문 조회
+GET http://localhost:8080/codingTest/order
 
+
+### 주문 저장
 POST http://localhost:8080/codingTest/order
 Content-Type: application/json
 
 {
-  "orderId": "0007",
-  "productName": "카페모카",
+  "orderId": "0009",
+  "productName": "카페테리아",
   "options": "",
   "tableNo": 3,
   "quantity": 1,
