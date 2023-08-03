@@ -1,5 +1,8 @@
 # rgt-codingtest
 
+## 개발환경
+SpringBoot, Java 17, Gradle, Mysql
+
 ## 1. REST API
 src/main/java/com/codingtest/rgt/order/controller/OrderController.java
 
